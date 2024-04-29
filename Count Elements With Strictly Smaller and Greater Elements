@@ -1,0 +1,22 @@
+class Solution {
+public:
+    int countElements(vector<int>& nums) {
+        int ans = 0;
+        if(nums.size() <=2)
+            return 0;
+        
+        sort(nums.begin(), nums.end());
+        auto siter = upper_bound(nums.begin(), nums.end(), nums[0]);
+        auto eiter = lower_bound(nums.begin(), nums.end(), nums[nums.size()-1]);
+
+
+        for(auto iter = siter ;iter != nums.end(); iter++)
+        {
+            if(iter == eiter)
+                break;
+            ans++;
+        }
+
+        return ans;
+    }
+};
