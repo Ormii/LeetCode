@@ -2,35 +2,42 @@ class Solution {
     static int mod;
 public:
     int sumSubarrayMins(vector<int>& arr) {
+        int length = arr.size();
+        vector<int> left(length, 0);
+        vector<int> right(length, 0);
 
-        queue<tuple<int,int,int>> que;
-
-        int minVal = numeric_limits<int>::max();
-        int ans = 0;
-        for(int i = 0; i < arr.size(); ++i)
+        stack<pair<int,int>> st = stack<pair<int,int>>();
+        for(int i = 0; i < length; ++i)
         {
-            que.push({i,i,arr[i]});
-            minVal = min(minVal, arr[i]);
+            int cnt = 1;
+            while(!st.empty() && st.top().first > arr[i])
+            {
+                cnt += st.top().second;
+                st.pop();
+            }
+
+            st.push({arr[i], cnt});
+            left[i] = cnt;
         }
 
-        while(!que.empty())
+        st = stack<pair<int,int>>();
+        for(int i = length-1; i >= 0; --i)
         {
-            auto[i,j,dp] = que.front();
-            que.pop();
-
-            ans = (ans + dp)%mod;
-
-            if(j+1<arr.size())
+            int cnt = 1;
+            while(!st.empty() && st.top().first >= arr[i])
             {
-                if(dp == minVal)
-                {
-                    ans = (ans + (minVal*(arr.size() - (j+1))%mod))%mod;
-                }
-                else
-                {
-                    que.push({i,j+1,min(dp,arr[j+1])});
-                }
+                cnt += st.top().second;
+                st.pop();
             }
+
+            st.push({arr[i], cnt});
+            right[i] = cnt;
+        }
+
+        int ans = 0;
+        for(int i = 0; i < length; ++i)
+        {
+            ans = (ans + (arr[i]*(long long)(left[i]*right[i]%mod))%mod)%mod;
         }
 
         return ans;
